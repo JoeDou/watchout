@@ -12,21 +12,43 @@ var generateCoordinates = function() {
   return array;
 };
 
-var arr = generateCoordinates();
+var dataArr = generateCoordinates();
 
 // Draw elements in svg element
-
 var svg = d3.select("body").append("svg")
   .attr("width", width)
   .attr("height", height)
   .attr("class", "gameArea");
 
-var enemy = d3.select(".gameArea").selectAll("circle")
-  .data(arr);
 
- enemy.enter().append("circle")
-  .attr("cx", function(d) { return d*Math.random()*width*0.85;})
-  .attr("cy", function(d) { return d*Math.random()*height*0.85;})
-  .attr("class", "enemy")
-  .attr("r", 10);
+function update(data) {
+
+
+  var enemy = d3.select(".gameArea").selectAll("circle")
+    .data(dataArr);
+
+  // enter
+  enemy.enter().append("circle")
+    .attr("cx", function(d) { return d*Math.random()*width*0.85;})
+    .attr("cy", function(d) { return d*Math.random()*height*0.95;})
+    .attr("class", "enemy")
+    .attr("r", 10);
+
+  // enter + update
+  enemy.transition()
+    .attr("cx", function(d) { return d*Math.random()*width*0.85;})
+    .attr("cy", function(d) { return d*Math.random()*height*0.95;})
+    .duration(1000);
+
+
+  // exit
+  enemy.exit().remove();
+}
+
+// initial display
+update(dataArr);
+
+setInterval(function(dataArr) {
+  update(dataArr);
+},1000);
 
