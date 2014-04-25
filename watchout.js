@@ -20,11 +20,13 @@ var svg = d3.select("body").append("svg")
   .attr("height", height)
   .attr("class", "gameArea");
 
-
+// every second update the enemy locations
 function update(data) {
 
 
-  var enemy = d3.select(".gameArea").selectAll("circle")
+  var gameboard = d3.select(".gameArea");
+
+  var enemy = gameboard.selectAll('.enemy')
     .data(dataArr);
 
   // enter
@@ -48,7 +50,21 @@ function update(data) {
 // initial display
 update(dataArr);
 
-setInterval(function(dataArr) {
-  update(dataArr);
-},1000);
+var gameboard = d3.select(".gameArea");
+
+var hero = gameboard.selectAll(".hero")
+  .data([0]);
+
+hero.enter().append("circle")
+  .attr("class", "hero")
+  .attr("x", 40)
+  .attr("y", 40)
+  .attr("r",10);
+
+
+
+
+// setInterval(function(dataArr) {
+//   update(dataArr);
+// },1000);
 

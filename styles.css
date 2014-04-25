@@ -13,3 +13,7 @@ body {
 .enemy {
   fill: red;
 }
+
+.hero {
+  fill: black;
+}
