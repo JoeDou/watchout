@@ -53,18 +53,35 @@ update(dataArr);
 var gameboard = d3.select(".gameArea");
 
 var hero = gameboard.selectAll(".hero")
-  .data([0]);
+  .data([{cx: width/2, cy: height/2}]);
 
 hero.enter().append("circle")
   .attr("class", "hero")
-  .attr("x", 40)
-  .attr("y", 40)
+  .attr("cx", function(d) { return d.cx;})
+  .attr("cy", function(d) { return d.cy;})
   .attr("r",10);
 
+var dragHero = d3.behavior.drag()
+  .on('dragstart', function(){
+    d3.event.sourceEvent.stopPropagation();
+    d3.event.sourceEvent.preventDefault();
+  })
+  .on('drag', function(d,i){
+    d.cx += d3.event.dx;
+    d.cy += d3.event.dy;
+    d3.select(this).attr('cx', d.cx).attr('cy',d.cy);
+  })
+  .on('dragend', function() {
+    console.log('dragend');
+  });
+
+hero.call(dragHero);
 
 
 
-// setInterval(function(dataArr) {
-//   update(dataArr);
-// },1000);
+
+
+setInterval(function(dataArr) {
+  update(dataArr);
+},1000);
 
