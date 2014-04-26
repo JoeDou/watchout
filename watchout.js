@@ -1,6 +1,7 @@
 var height = 600;
 var width = 600;
 var numCircles = 20;
+var radius = 10;
 
 // Helper functions
 
@@ -34,13 +35,25 @@ function update(data) {
     .attr("cx", function(d) { return d*Math.random()*width*0.85;})
     .attr("cy", function(d) { return d*Math.random()*height*0.95;})
     .attr("class", "enemy")
-    .attr("r", 10);
+    .attr("r", radius);
 
   // enter + update
   enemy.transition()
     .attr("cx", function(d) { return d*Math.random()*width*0.85;})
     .attr("cy", function(d) { return d*Math.random()*height*0.95;})
-    .duration(1000);
+    .duration(1000)
+    .tween(".enemy", function() {
+      return function(t) {
+        var heroX = hero[0][0].cx.animVal.value;
+        var heroY = hero[0][0].cy.animVal.value;
+        var enemyX = this.cx.animVal.value;
+        var enemyY = this.cy.animVal.value;
+        if( Math.abs(heroX - enemyX) < radius && Math.abs(heroY - enemyY))  {
+          console.log("YEP");
+        }
+
+      };
+    });
 
 
   // exit
@@ -59,7 +72,7 @@ hero.enter().append("circle")
   .attr("class", "hero")
   .attr("cx", function(d) { return d.cx;})
   .attr("cy", function(d) { return d.cy;})
-  .attr("r",10);
+  .attr("r",radius);
 
 var dragHero = d3.behavior.drag()
   .on('dragstart', function(){
@@ -76,9 +89,7 @@ var dragHero = d3.behavior.drag()
   });
 
 hero.call(dragHero);
-
-
-
+console.log(hero[0][0].cx.animVal.value);
 
 
 setInterval(function(dataArr) {
