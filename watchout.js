@@ -2,6 +2,18 @@ var height = 600;
 var width = 600;
 var numCircles = 20;
 var radius = 10;
+var  score = 0;
+var highScore = 0;
+
+// Manage the score!
+var updateScore = function(){
+  score++;
+  return d3.select('#currentScore').text(score);
+};
+
+var updateHighScore = function(){
+  return d3.select('#highScore').text(highScore);
+};
 
 // Helper functions
 
@@ -49,12 +61,14 @@ function update(data) {
         var enemyX = this.cx.animVal.value;
         var enemyY = this.cy.animVal.value;
         if( Math.abs(heroX - enemyX) < radius && Math.abs(heroY - enemyY))  {
-          console.log("YEP");
+          if (score > highScore){
+            highScore = score;
+            updateHighScore();
+          }
+          score=0;
         }
-
       };
     });
-
 
   // exit
   enemy.exit().remove();
@@ -95,4 +109,6 @@ console.log(hero[0][0].cx.animVal.value);
 setInterval(function(dataArr) {
   update(dataArr);
 },1000);
+
+setInterval(updateScore, 100);
 
