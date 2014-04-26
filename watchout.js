@@ -4,6 +4,8 @@ var numCircles = 20;
 var radius = 10;
 var  score = 0;
 var highScore = 0;
+var collisionNum = 0;
+var collisionBool = false;
 
 // Manage the score!
 var updateScore = function(){
@@ -11,11 +13,15 @@ var updateScore = function(){
   return d3.select('#currentScore').text(score);
 };
 
+//manage the high score
 var updateHighScore = function(){
   return d3.select('#highScore').text(highScore);
 };
 
 // Helper functions
+var updateCollisions = function() {
+  return d3.select('#collisionNum').text(collisionNum);
+};
 
 var generateCoordinates = function() {
   var array = [];
@@ -31,10 +37,25 @@ var dataArr = generateCoordinates();
 var svg = d3.select("body").append("svg")
   .attr("width", width)
   .attr("height", height)
-  .attr("class", "gameArea");
+  .attr("class", "gameArea")
+
+svg.append('filter')
+  .attr('id','image')
+  .attr('width','100%')
+  .attr('height','100%')
+  .append('feImage')
+  .attr('xlink:href','Ghost.png');
+
+svg.append('filter')
+  .attr('id','pacman')
+  .attr('width','100%')
+  .attr('height','100%')
+  .append('feImage')
+  .attr('xlink:href','Pacman.png');
 
 // every second update the enemy locations
 function update(data) {
+
 
 
   var gameboard = d3.select(".gameArea");
@@ -42,12 +63,13 @@ function update(data) {
   var enemy = gameboard.selectAll('.enemy')
     .data(dataArr);
 
-  // enter
+
   enemy.enter().append("circle")
     .attr("cx", function(d) { return d*Math.random()*width*0.85;})
     .attr("cy", function(d) { return d*Math.random()*height*0.95;})
     .attr("class", "enemy")
-    .attr("r", radius);
+    .attr("r", radius)
+    .attr('filter','url(#image)');
 
   // enter + update
   enemy.transition()
@@ -61,14 +83,21 @@ function update(data) {
         var enemyX = this.cx.animVal.value;
         var enemyY = this.cy.animVal.value;
         if( Math.abs(heroX - enemyX) < radius && Math.abs(heroY - enemyY))  {
-          if (score > highScore){
-            highScore = score;
-            updateHighScore();
-          }
-          score=0;
+          collisionBool = true;
         }
       };
     });
+
+  if (collisionBool){
+    collisionNum++;
+    updateCollisions();
+    collisionBool = false;
+    if (score > highScore){
+      highScore = score;
+      updateHighScore();
+    }
+    score=0;
+  }
 
   // exit
   enemy.exit().remove();
@@ -86,7 +115,9 @@ hero.enter().append("circle")
   .attr("class", "hero")
   .attr("cx", function(d) { return d.cx;})
   .attr("cy", function(d) { return d.cy;})
-  .attr("r",radius);
+  .attr("r",radius)
+  .attr('filter','url(#pacman)');
+
 
 var dragHero = d3.behavior.drag()
   .on('dragstart', function(){
@@ -99,11 +130,9 @@ var dragHero = d3.behavior.drag()
     d3.select(this).attr('cx', d.cx).attr('cy',d.cy);
   })
   .on('dragend', function() {
-    console.log('dragend');
   });
 
 hero.call(dragHero);
-console.log(hero[0][0].cx.animVal.value);
 
 
 setInterval(function(dataArr) {

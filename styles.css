@@ -3,6 +3,7 @@ body {
   background-color: #336699;
 }
 
+
 .gameArea {
   background-color: #CCFFFF;
   margin-left: auto;
@@ -11,7 +12,7 @@ body {
 }
 
 .scoreboard {
-  width: 120px;
+  width: 150px;
   border-color:black;
   border-style:inset;
   padding:2px;
@@ -21,7 +22,7 @@ body {
 }
 
 .enemy {
-  fill: red;
+
 }
 
 .hero {
